@@ -9,7 +9,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/error/en.h>
 
-#include "Define.h"
+#include "ParseOptions.h"
 #include "TrackingStream.h"
 
 namespace rj = rapidjson;

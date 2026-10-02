@@ -36,3 +36,9 @@ src/Build/
 
 # Others
 *.zip
+
+# Local Notepad-- build tools, SDKs, reference checkouts and build output
+.build-tools/
+.build/
+.reference/
+dist/

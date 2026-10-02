@@ -1,214 +1,57 @@
-# JSONViewer for Notepad++
-[![GitHub release](https://img.shields.io/github/release/kapilratnani/JSON-Viewer.svg)](../../releases/latest)
-&nbsp;&nbsp;&nbsp;&nbsp;[![CI Build](https://github.com/kapilratnani/JSON-Viewer/actions/workflows/ci_build.yml/badge.svg)](https://github.com/kapilratnani/JSON-Viewer/actions/workflows/ci_build.yml)
-&nbsp;&nbsp;&nbsp;&nbsp;[![Code Scanning](https://github.com/kapilratnani/JSON-Viewer/actions/workflows/codeql.yml/badge.svg)](https://github.com/kapilratnani/JSON-Viewer/actions/workflows/codeql.yml)
+# JSON Viewer for Notepad--
 
-This plugin is designed to display JSON strings in a Treeview format and highlight the error position if any parsing issues occur. It's a simple and efficient tool, compatible with [Notepad++](https://github.com/notepad-plus-plus/notepad-plus-plus).
+[![Notepad-- shared core](https://github.com/SaiyoujiYuyuko/JSON-Viewer/actions/workflows/ndd-core.yml/badge.svg)](https://github.com/SaiyoujiYuyuko/JSON-Viewer/actions/workflows/ndd-core.yml)
 
+本项目 fork 自 [NPP-JSONViewer/JSON-Viewer](https://github.com/NPP-JSONViewer/JSON-Viewer)，针对 **Notepad--** 进行适配，提供按 JSON 原文顺序展示、带各层元素数量的树形查看器。
 
-## Instructions:
-1. Copy the file `NPPJSONViewer.dll` to the `plugins\NPPJSONViewer` folder in the Notepad++ installation directory..
-2. Restart Notepad++ and ensure the plugin appears under the Plugins menu.
-3. Open a document containing a JSON string (or paste in some JSON text).
-4. Select the JSON fragment and go to <b>Plugins > JSON Viewer > Show JSON Viewer</b> or press  or press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>J</kbd>.
-5. Voila, that's it! If the JSON is valid, it will be displayed in a Treeview format.
+适配层复用上游的解析依赖和格式化实现，并使用 Qt 构建侧边栏界面。后续可通过合并上游代码继续同步核心修复。
 
+## 功能
 
-## Latest Updates:
+- **保持原文顺序**：对象字段按出现顺序显示，数组元素按实际下标排列，包括 `[10]`、`[11]` 等。
+- **显示各层数量**：`{n}` 表示对象的直接字段数，`[n]` 表示数组的直接元素数。
+- **原文定位**：单击节点定位，双击选中键名或数组元素的值。
+- **搜索与复制**：搜索键或值，复制名称、原始 JSON 值和节点路径。
+- **树形操作**：展开、折叠、字体缩放，以及跟随当前文档。
+- **格式化与压缩**：保留字段顺序和数字原始精度，支持一次撤销。
+- **查看选区**：单独解析选中的 JSON 片段。
 
-### 2.2.0.0
+例如，文件中的 `{"z":1,"a":2}` 会按 `z → a` 展示。查看和格式化不会自动按字母重排字段；只有主动选择 **Sort keys (changes document)** 才会修改字段顺序。
 
-1. Bug/regression fixes:
-    1. Fixed handling of JSON raw number values during formatting and serialization.
-    2. Fixed parser behavior to preserve numeric values as strings when required by using RapidJSON's kParseNumbersAsStringsFlag.
-    3. Added unit tests
-        3.1 Added extensive unit tests for JSON sorting functionality.
-        3.2 Added additional parser and regression test coverage.
-        3.3 Expanded overall automated test coverage to improve reliability.
+## 兼容环境
 
-2. Other enhancements:
-    1. Upgraded project and build infrastructure to Visual Studio 2026.
-    2. Migrated solution management to .slnx format.
-    3. Migrated shared components from external copies to Git submodules for improved maintainability.
-    4. Updated project dependencies and submodules, including Google Test.
-    5. Improved code quality through refactoring, formatting, and minor performance optimizations.
-    6. Modernized GitHub Actions workflows and CI/CD dependencies.
+已验证：**Notepad-- 3.9.0 / Windows x64 / Qt 5.15.2**。其他宿主版本需要重新核对接口并测试。界面文字目前为英文。
 
+插件菜单名称：`JSON Viewer (Upstream)`。
 
-### 2.1.1.0
+插件文件名称：`ndd-json-viewer-upstream.dll`。
 
-1. New features:
-    1. Zoom tree view with <kbd>ctrl</kbd> + `mouse wheel` or slider.
+## 安装与使用
 
+1. 按[构建说明](README_NOTEPAD_MINUS_MINUS.md#从源码构建)生成插件 DLL。
+2. 保存文件并退出 Notepad--，将 DLL 复制到安装目录下的 `plugin` 文件夹。
+3. 启动 Notepad-- 并打开 JSON 文件。
+4. 选择 **插件 → JSON Viewer (Upstream) → Show JSON Viewer**，或按 **Ctrl+Alt+Shift+J**。
 
-2. Bug/regression fixes:
-    1. Updated to the latest RapidJSON parser.
-    2. Minor code enhancements for improved performance.
-    3. Added unit tests
+查看选区使用 **View selected JSON**。在树的搜索框输入内容后按 Enter 查找，继续按 Enter 查找下一项。
 
+已有的 JSONview plug 可以与本插件并存。升级时退出宿主并替换本插件 DLL；卸载时退出宿主后移走该 DLL。
 
-### 2.1.0.0
+## 构建与测试
 
-1. New features:
-    1. Navigate directly to the JSON node in the editor upon node selection (using left mouse click or arrow keys).
-    2. Select the JSON key in the editor when double-clicking on a node.
+构建依赖：MSVC x64、Windows SDK、Qt 5.15.2 msvc2019_64、CMake、Ninja 和 Python 3。仓库提供 `tools/prepare_ndd_sdk.py`，使用固定版本头文件和本机宿主 DLL 生成适配 SDK。
 
+完整步骤、接口兼容说明和维护方法见 [Notepad-- 使用与构建说明](README_NOTEPAD_MINUS_MINUS.md)。
 
-2. Bug/regression fixes:
-    1. Updated to the latest RapidJSON parser.
-    2. Minor code enhancements for improved performance.
-    3. Added unit tests
+共享核心包含 **55 个自动测试**，覆盖顺序、精度、中文与转义位置、重复键和异常输入等；CI 使用 `.github/workflows/ndd-core.yml` 验证共享核心。宿主内已验证插件加载、标签页跟随、节点定位、格式化及撤销。
 
+## 当前限制
 
-### 2.0.8.0
+- 编辑器内部需使用 UTF-8；支持最多 64 MiB 文本、512 层嵌套。树节点一次性构建，大文件可能卡顿。
+- 注释和尾逗号默认允许，解析沿用上游部分 JSON 扩展。格式化或压缩会移除注释。
+- 查看与格式化保留重复字段；显式排序拒绝重复键和含 `\u0000` 的键名。
+- 上游新增的界面功能需要另行适配；当前尚未移植 `undefined` 自动替换、打开文件自动格式化等功能。
 
-1. New features:
-    1. Sort ascending by key
-    2. Add file name in the title for visibility
+## 来源与许可
 
-
-2. Bug/regression fixes:
-    1. Updated license text on UI as per GitHub link
-    2. Explicit callout for no support on multi selection
-    3. Some other minor code and UI enhancements
-
-
-### 2.0.7.0
-Bug/regression fixes:
-1. "Copy value" / "Copy" not always return complete text
-2. Format JSON option does not work if focused tab is in other view
-3. Corrected some typos on setting dialog
-4. Updated icons to match with dark mode as well
-5. Removed quotes from the key in Treeview
-6. Some other minor enhancements
-
-### 2.0.6.0
-1. New feature:
-    1. Replace value 'undefined' with 'null'. This is configurable feature.
-2. Bug/regression fixes:
-    1. Cyrillic text is not properly shown in json tree view dialog
-
-### 2.0.5.0
-1. New feature:
-    1. Make json highlighter configurable
-2. Bug/regression fixes:
-    1. Handle json for both the views.
-    2. Update treeview on reopen
-    3. When file type is json, then error message is shown twice on npp launch if viewer dock was kept opened on previous instance
-    4. Don't show error message on startup for non json files
-
-### 2.0.4.0
-1. New feature:
-    1. Show element count for list/array
-2. Bug/regression fixes:
-    1. Crash fix: Setting dialog is not shown if about dialog is opened before it.
-    2. Set language type JSON properly
-    3. Some minor UI enhancements
-
-### 2.0.3.0
-1. New feature:
-    1. Search in json tree window
-    2. Handle NaN, Inf, -Inf, Infinity, -Infinity properly
-2. Bug/regression fixes:
-    1. Handle all types of arrays which does not have any key
-    2. Corrected typos in setting json
-    3. Don't use double qoutes for other than string type
-
-
-### 2.0.2.0
-1. Provided UI to control formatting option via setting dialog
-    1. Setting for indentation
-    2. Setting for line ending
-    3. Setting for line format
-    4. Make json parsing configurable e.g. ignore trailing comma, ignore comment
-2. Added couple of new feature
-    1. Follow json tree for current tab if it is json file
-    2. Auto format json file when opened (by direct or by tab switching)
-3. Few bug/regression fixes
-
-### 2.0.1.0
-1. Redeveloped UI 
-    1. Provided menu icon
-    2. Json view panel is redesigned which is button like, refresh, validate, format etc.
-    3. It uses well performed class instead of plain function
-2. Current selected node path is given on the bottom of json view window
-3. Many feature support such as copy node, copy value, copy path, expand/collapse all etc.
-4. Few bug fixes
-
-
-### 1.41
-1. Support for ARM64
-2. Dropped Windows XP support as Notepad++ is no more supporting Windows XP.
-3. Upgrade Visual Studio to 2022
-
-
-### 1.40
-1. issue-55 Format JSON should also set the language to JSON #FeatureRequest
-2. issue-56 Format Should Follow Line Break Settings
-3. issue-57, issue-60 "Should add a function to remove line breaks and spaces" Thanks @neoarc
-4. issue-68 Crashing Notepad++
-5. issue-72 tab setting from notepad++ settings are not honored
-6. issue-73 Display tree for Array of Object 
-7. issue-80 use line ending setting from editor
-8. Relaxed parsing. Supports trailing commas, comments(only parsing), NaN and infinity JS literals.
-  
-### 1.34
-1. Fix Access Violation issue #51
-2. Fix issue #47
-3. Fix issue #43
-
-### 1.31
-1. Reads tab setting from notepad++ settings
-
-### 1.30a
-1. Now using rapidjson
-
-### 1.24
-1. 64 bit support. Thanks @chcg
-   
-### 1.23
-1. Select all text when no selection
-   Thanks @vakio
-2. fix memory leak and close About dialog when clicking "Close" button
-   Thanks @quangnh89 
-
-### 1.22
-1. Fixed display of boolean values. Now displaying as "key":True/False
-   Thanks @yoyokenny
-2. Fixed hang on faulty JSON.
-   Thanks @vancekic
-
-### 1.21
-1. Fixed display of UTF-8 characters.
-
-### 1.20
-1. Fixed bug "#3 quoted doublequotes-Jan Huschauer"
-
-### 1.19
-1. Added a command to format JSON
-
-### 1.175
-1. Now displays a message box when JSON string is not selected.
-
-### 1.17
-1. Fixed dialog display issue, that occurred in 1.16 release.
-
-### 1.16
-1. Fixed bug - 3305433 do not find error on second try and do not build tree
-2. Fixed a memory leak..was not de-allocating memory allocated to json strings
-
-### 1.15
-1. Fixed bug 3203739 "Unable to parse JSON Arrays"
-
-### 1.1
-1. Fixed hotkey, now press CTRL+SHIFT+ALT+J(default).
-2. Marks error position in JSON
-
-
-## Contributors
-
-<div align="center">
-
-<a href="https://github.com/kapilratnani/JSON-Viewer/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=kapilratnani/JSON-Viewer" />
-</a>
+感谢[上游项目及贡献者](https://github.com/NPP-JSONViewer/JSON-Viewer/graphs/contributors)。本仓库代码沿用 [MIT 许可](LICENSE)，Qt、QScintilla 等依赖适用各自许可，详见[第三方依赖说明](THIRD_PARTY_NOTICES_NDD.md)。

@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/jsonviewer">
+    <file alias="refresh.ico">../NppJsonViewer/res/Refresh.ico</file>
+    <file alias="validate.ico">../NppJsonViewer/res/validate.ico</file>
+    <file alias="format.ico">../NppJsonViewer/res/format.ico</file>
+  </qresource>
+</RCC>

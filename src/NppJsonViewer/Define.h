@@ -3,6 +3,7 @@
 #include <string>
 
 #include "PluginInterface.h"
+#include "ParseOptions.h"
 
 // Define the number of plugin commands here
 enum class CallBackID : int
@@ -103,13 +104,6 @@ struct Indent
 {
     unsigned    len   = 4;
     IndentStyle style = IndentStyle::AUTO;
-};
-
-struct ParseOptions
-{
-    bool bIgnoreComment       = true;
-    bool bIgnoreTrailingComma = true;
-    bool bReplaceUndefined    = false;
 };
 
 struct Setting
