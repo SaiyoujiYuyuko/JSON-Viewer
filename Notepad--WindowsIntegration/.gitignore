@@ -1,0 +1,22 @@
+# Machine-specific editor path; commit only settings.example.json.
+/settings.local.json
+/*.local.*
+
+# Generated registration files and package manifests can contain local paths.
+/manual/*.reg
+/SHA256SUMS.txt
+
+# Local research, binaries, archives, backups and run results.
+.build/
+*.exe
+*.obj
+*.pdb
+*.zip
+*.log
+__pycache__/
+backups/
+backup.json
+before.json
+before.reg
+last-backup.txt
+*-result.json

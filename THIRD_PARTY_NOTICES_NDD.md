@@ -7,6 +7,8 @@ The original JSON-Viewer source and the new adapter source are provided under th
 | JSON-Viewer code and reused icons | This repository, based on NPP-JSONViewer/JSON-Viewer | MIT; retain `LICENSE` |
 | RapidJSON fork | `external/rapidjson`, pinned Git submodule | See `external/rapidjson/license.txt` for MIT and bundled component notices |
 | GoogleTest | `external/googletest`, pinned Git submodule | BSD-3-Clause; test-only dependency |
+| PS-SFTA | https://github.com/DanysysTeam/PS-SFTA at `22a32292e576afc976a1167d92b50741ef523066` | MIT; see `Notepad--WindowsIntegration/source/sfta/LICENSE.txt`; used by the optional Windows integration tools |
+| UserChoiceLatestHash | https://github.com/cssxn/UserChoiceLatestHash at `662070e5cdea4496bc474f4bdfd81f77d4cabab3` | MIT; see `Notepad--WindowsIntegration/source/ucl/LICENSE`; used by the optional Windows integration tools |
 | Qt 5.15.2 Core, Gui, Widgets | https://download.qt.io/archive/qt/5.15/5.15.2/ | LGPLv3/GPL/commercial terms as applicable; plugin dynamically uses the host's Qt DLLs |
 | Notepad-- QScintilla interface | https://gitee.com/cxasm/notepad--/tree/91105f68b74382128f3313ac5af8accdc77de918/src/qscint | The downloaded headers retain Riverbank's GPLv3/commercial notices. The plugin dynamically links the host's `qmyedit_qt5.dll` |
 

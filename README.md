@@ -37,6 +37,12 @@
 
 已有的 JSONview plug 可以与本插件并存。升级时退出宿主并替换本插件 DLL；卸载时退出宿主后移走该 DLL。
 
+## Windows 默认文本编辑器设置
+
+仓库还提供 [Notepad-- Windows 集成工具](Notepad--WindowsIntegration/README.md)，可批量关联 22 种文本文件，并检查或恢复原关联；另有可选的经典 `notepad.exe` 替换功能。
+
+工具位于 `Notepad--WindowsIntegration/`，与查看器插件分别使用。源码包含构建和使用说明；个人安装路径通过不提交到 Git 的 `settings.local.json` 配置，机器备份与编译产物不入库。
+
 ## 构建与测试
 
 构建依赖：MSVC x64、Windows SDK、Qt 5.15.2 msvc2019_64、CMake、Ninja 和 Python 3。仓库提供 `tools/prepare_ndd_sdk.py`，使用固定版本头文件和本机宿主 DLL 生成适配 SDK。
