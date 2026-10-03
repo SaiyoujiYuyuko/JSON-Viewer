@@ -33,7 +33,7 @@ Copy-Item .\settings.example.json .\settings.local.json
 
 | 文件 | 作用 |
 | --- | --- |
-| [01-Set-Defaults.cmd](01-Set-Defaults.cmd) | 一键注册、备份、批量设置并验证 22 种文件关联 |
+| [01-Set-Defaults.cmd](01-Set-Defaults.cmd) | 一键注册、备份、批量设置并验证 22 种文件关联，整理重复菜单 |
 | [02-Check-Defaults.cmd](02-Check-Defaults.cmd) | 只读检查当前关联 |
 | [03-Restore-Defaults.cmd](03-Restore-Defaults.cmd) | 按最近一次备份恢复原关联；需要回退时才运行 |
 
@@ -50,15 +50,17 @@ Copy-Item .\settings.example.json .\settings.local.json
 
 | 目录 | 内容 |
 | --- | --- |
-| `optional/` | 可选的系统 `notepad.exe` 替换与恢复入口，需要管理员权限 |
+| `optional/` | 系统 `notepad.exe` 替换与恢复（管理员权限），菜单整理与恢复（普通权限） |
 | `manual/` | 手工注册、取消注册与打开 Windows 默认应用设置；日常批量设置不需要使用 |
 | `tools/` | 主入口调用的 PowerShell 脚本和辅助程序 |
-| `docs/` | [批量关联说明](docs/BATCH_DEFAULTS.md)与[系统记事本替换说明](docs/NOTEPAD_REPLACEMENT.md) |
+| `docs/` | [批量关联说明](docs/BATCH_DEFAULTS.md)、[系统记事本替换说明](docs/NOTEPAD_REPLACEMENT.md)和[菜单整理说明](docs/CONTEXT_MENU.md) |
 | `source/` | 辅助程序源码、构建脚本、校验脚本及第三方许可；批量设置还需要其中的 `sfta/` |
 
 个人配置、生成的注册表文件、备份、运行日志、编译产物与 `.build/` 缓存都被 Git 忽略。请勿使用 `git add -f` 将这些本地材料加入提交。
 
 如果还要让命令行或其他程序启动经典 `notepad.exe` 时打开 Notepad--，右键 `optional/01-Replace-Notepad.cmd`，以管理员身份运行。回退使用同目录的 `02-Restore-Notepad.cmd`，也需要管理员权限。详见替换说明。
+
+批量设置会保留 **Edit with Notepad--**，隐藏已有的重复 `Notepad--`、旧 `Notepad4` 菜单和 Windows 的“在记事本中编辑”。单独整理用 `optional/03-Clean-Context-Menu.cmd`，恢复原菜单用 `optional/04-Restore-Context-Menu.cmd`，两者均普通权限运行。
 
 ## 在其他电脑使用
 
@@ -77,6 +79,8 @@ Copy-Item .\settings.example.json .\settings.local.json
 手工 `.reg` 文件需先运行 `tools/Generate-RegistryFiles.ps1` 生成。`manual/Register-Notepad--.reg` 只注册当前用户的候选程序和右键菜单，随后可用 `manual/Open-DefaultApps.cmd` 打开系统设置自行选择默认程序。普通静态 `.reg` 文件不能可靠覆盖 Windows 已有的默认选择。
 
 要取消本包注册，先用 `03-Restore-Defaults.cmd` 恢复原关联并检查结果，或在 Windows 设置中选回其他程序，再导入 `manual/Unregister-Notepad--.reg`。取消注册不撤销可选的 `notepad.exe` 替换。
+
+如果运行过菜单整理，取消注册前用 `optional/04-Restore-Context-Menu.cmd` 恢复原菜单可见性。
 
 如需为其他路径生成手工注册文件：
 

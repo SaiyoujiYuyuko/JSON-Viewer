@@ -88,6 +88,7 @@ try {
             ($modern -and $_.LatestProgId -ne $target) -or $_.Executable -ine $EditorPath
         })
         if ($pending.Count -eq 0) {
+            & (Join-Path $PSScriptRoot 'ContextMenu.ps1') -Action Install -EditorPath $EditorPath
             Write-Host 'All 22 associations already match; the previous backup is preserved.'
             return
         }
@@ -157,5 +158,6 @@ try {
     Write-Host "Backup / results: $runDir"
     $failed = @($results | Where-Object Result -eq 'FAILED').Count
     if ($failed) { throw "$failed association(s) failed. See the per-extension results; this was not a complete success." }
+    if ($Action -eq 'Apply') { & (Join-Path $PSScriptRoot 'ContextMenu.ps1') -Action Install -EditorPath $EditorPath }
     Write-Host "$($results.Count) associations verified."
 } finally { [Console]::OutputEncoding = $savedEncoding }

@@ -71,7 +71,10 @@ try {
             $key.Dispose(); $key = $null
         }
         $writeKey = $base.CreateSubKey($ifeoPath)
-        try { $writeKey.SetValue('Debugger', $expected, [Microsoft.Win32.RegistryValueKind]::String) }
+        try {
+            $writeKey.SetValue('Debugger', $expected, [Microsoft.Win32.RegistryValueKind]::String)
+            if ($writeKey.GetValue('Debugger') -cne $expected) { throw 'Replacement verification failed.' }
+        }
         finally { $writeKey.Dispose() }
         Write-Output "Installed: $expected"
         Write-Output "Previous replacement backed up to: $backupPath"

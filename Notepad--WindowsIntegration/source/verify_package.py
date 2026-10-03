@@ -57,11 +57,14 @@ assert len(registered['HKEY_CURRENT_USER\\Software\\NotepadMinusMinusPortable\\C
 for name in (
     '01-Set-Defaults.cmd', '02-Check-Defaults.cmd', '03-Restore-Defaults.cmd',
     'optional/01-Replace-Notepad.cmd', 'optional/02-Restore-Notepad.cmd',
+    'optional/03-Clean-Context-Menu.cmd', 'optional/04-Restore-Context-Menu.cmd',
     'manual/Open-DefaultApps.cmd', 'tools/AssociationBridge.exe',
     'tools/NotepadRedirect.exe', 'tools/BatchDefaults.ps1',
     'tools/NotepadReplacement.ps1', 'tools/Generate-RegistryFiles.ps1',
     'tools/Get-EditorPath.ps1', 'settings.example.json',
+    'tools/ContextMenu.ps1',
     'source/sfta/SFTA.ps1', 'README.md', 'docs/BATCH_DEFAULTS.md',
+    'docs/CONTEXT_MENU.md',
 ):
     assert (root / name).is_file(), name
 for launcher in list(root.glob('*.cmd')) + list((root / 'optional').glob('*.cmd')):
