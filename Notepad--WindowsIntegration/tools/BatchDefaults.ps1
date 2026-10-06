@@ -52,7 +52,9 @@ function Restore-Choice($Old, [bool]$Modern) {
     $after = Read-Choice $Old.Extension
     # With no previous default Windows may choose a registered fallback. Restore
     # absence of explicit choices, rather than fabricate a default that never existed.
-    if (($Old.EffectiveProgId -and $after.EffectiveProgId -ne $Old.EffectiveProgId) -or $after.LatestProgId -ne $Old.LatestProgId -or $after.LegacyProgId -ne $Old.LegacyProgId) {
+    if (($Old.EffectiveProgId -and $after.EffectiveProgId -ne $Old.EffectiveProgId) -or
+        $after.LatestExists -ne $Old.LatestExists -or $after.LegacyExists -ne $Old.LegacyExists -or
+        $after.LatestProgId -ne $Old.LatestProgId -or $after.LegacyProgId -ne $Old.LegacyProgId) {
         throw 'The restored selection does not match the backup.'
     }
 }
@@ -64,6 +66,7 @@ try {
     $build = [int](Get-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').CurrentBuild
     Write-Host "Windows build: $build; UserChoiceLatest present: $modern"
     if ($modern) { Invoke-Bridge @('preflight') | ForEach-Object { Write-Host "Native hash check: $_" } }
+    else { Write-Host 'No UserChoiceLatest records detected for these extensions; using legacy UserChoice with per-extension verification.' }
     if ($Action -eq 'Status') {
         $before | Select-Object Extension,EffectiveProgId,LegacyProgId,LatestProgId | Format-Table -AutoSize
         Write-Host 'Read-only check finished. No associations changed.'
@@ -73,10 +76,8 @@ try {
     if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
         throw 'Run this script normally as the intended user, not with Run as administrator.'
     }
-    # On new Windows, require an existing native hash as a compatibility anchor.
-    if ($build -ge 26100 -and -not $modern) {
-        throw 'No native UserChoiceLatest anchor found on this new Windows build. Set .txt once in Windows Settings, then retry.'
-    }
+    # The build number alone does not establish whether UserChoiceLatest is in use.
+    # With no latest records, use Set-FTA and verify Windows' effective choice.
     $engine = Join-Path (Split-Path -Parent $PSScriptRoot) 'source\sfta\SFTA.ps1'
     . $engine
     if ($Action -eq 'Apply') {
@@ -114,6 +115,7 @@ try {
                 Set-FTA -ProgId $target -Extension $old.Extension
                 if ($modern) { Invoke-Bridge @('set-latest',$old.Extension,$target) | Out-Null }
                 $after = Read-Choice $old.Extension
+                if (-not $modern -and $after.LatestExists) { throw 'UserChoiceLatest appeared during legacy apply. Association mode changed; rerun Status before retrying.' }
                 if ($after.EffectiveProgId -ne $target -or $after.LegacyProgId -ne $target -or
                     ($modern -and $after.LatestProgId -ne $target) -or $after.Executable -ine $EditorPath) {
                     throw 'Windows effective association, command, or stored choices do not match the requested editor.'

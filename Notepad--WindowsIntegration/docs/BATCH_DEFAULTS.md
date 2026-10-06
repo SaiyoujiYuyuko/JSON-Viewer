@@ -17,9 +17,11 @@ Windows 的 `UserChoice` 包含与用户、扩展名、程序和时间相关的�
 
 新版模式在写入前用本机现有记录验证算法兼容性；不匹配就停止。设置时同步两套记录，并通过 Windows 的 `QueryCurrentDefault` 和 `AssocQueryString` 检查当前选择和启动路径。脚本不修改 UCPD 服务、系统策略或注册表 ACL。
 
-这是依赖公开实现的适配工具，**微软没有保证该设置方法始终兼容，Windows 更新可能改变算法或拒绝写入**。已在 Windows 11 25H2 环境验证批量设置；这不代表所有 Windows 版本都已验证。旧版 Windows 没有 UserChoiceLatest 时使用旧引擎，尚未在旧版系统实测。
+这是依赖公开实现的适配工具，**微软没有保证该设置方法始终兼容，Windows 更新可能改变算法或拒绝写入**。已在 Windows 11 25H2 环境验证新版模式；这不代表所有 Windows 版本都已验证。目标文件类型没有 UserChoiceLatest 时使用旧引擎，设置后同样验证有效关联、旧记录和启动路径；这条分支已做模拟回归测试，仍需在目标电脑运行验证。
 
-若新版系统没有用于验证算法的现有记录，脚本会提示先在 Windows 设置中把 `.txt` 设置一次再重试；不需要逐个设置全部类型。
+2026-10-06 修复：不再仅凭 `build >= 26100` 要求必须存在 UserChoiceLatest。若旧脚本报错 `No native UserChoiceLatest anchor found on this new Windows build`，覆盖更新后的 `tools/BatchDefaults.ps1`，再普通权限运行 `01-Set-Defaults.cmd` 即可。该旧报错发生在写入前，没有修改关联；不必为了通过这个判断而手工设置 `.txt`。
+
+已有新版记录时仍需通过原有兼容校验，不会自动降级绕过。旧版模式运行中若出现新版记录，会报告模式变化并尝试恢复旧选择，不会把它当作设置成功。
 
 ## 判断结果
 
@@ -59,3 +61,5 @@ Windows 的 `UserChoice` 包含与用户、扩展名、程序和时间相关的�
 - [UserChoiceLatestHash](https://github.com/cssxn/UserChoiceLatestHash)：固定提交 `662070e5cdea4496bc474f4bdfd81f77d4cabab3`，MIT。算法、表文件与完整许可在 `source/ucl/`。
 - `source/AssociationBridge.cpp` 与 `tools/BatchDefaults.ps1` 是本地适配代码。在 MSVC x64 环境运行 `source/build-associations.cmd` 可重建 `tools/AssociationBridge.exe`。
 - 本包不包含或依赖 SetUserFTA 二进制。
+
+`source/Test-AssociationModes.ps1` 在隔离文件目录中模拟关联状态，覆盖新版/旧版设置、恢复、重复运行、失败回滚及模式变化，不导入注册表或修改系统文件关联。可用 Windows PowerShell 5.1 运行。

@@ -96,6 +96,8 @@ Copy-Item .\settings.example.json .\settings.local.json
 
 批量设置依赖 Windows 关联校验的公开实现，Windows 更新可能影响兼容性。脚本会先检查兼容性，再验证每项设置结果；有失败时请查看窗口和结果日志。详见[批量关联说明](docs/BATCH_DEFAULTS.md)。这是本地适配工具，不是 Notepad-- 或微软官方组件。
 
+Windows 26200 等版本没有 `UserChoiceLatest` 记录时，更新后的脚本会使用旧版 `UserChoice` 并逐项验证，不再因版本号提前停止。若遇到旧报错 `No native UserChoiceLatest anchor found`，只需更新 `tools/BatchDefaults.ps1` 后重试；保留自己的 `settings.local.json` 和原有辅助 EXE。
+
 ## 只读验证
 
 在本目录的 PowerShell 中运行以下命令。Python 3 仅供验证包结构，不是日常运行依赖。
